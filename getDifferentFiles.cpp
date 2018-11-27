@@ -171,8 +171,12 @@ int getDifferentFiles(char *_original_path, char *_change_path) {
 				sprintf(_change_file_command, "md5sum %s/%s", _change_path, _dirp->d_name);
 
 				//get md5hash
-				fgets(_original_file_md5hash, sizeof(_original_file_md5hash), popen(_original_file_command, "r"));
-				fgets(_change_file_md5hash, sizeof(_change_file_md5hash), popen(_change_file_command, "r"));
+				FILE *_original_file_exec = popen(_original_file_command, "r");
+				FILE *_change_file_exec = popen(_change_file_command, "r");
+				fgets(_original_file_md5hash, sizeof(_original_file_md5hash), _original_file_exec);
+				fgets(_change_file_md5hash, sizeof(_change_file_md5hash), _change_file_exec);
+				pclose(_original_file_exec);
+				pclose(_change_file_exec);
 
 				//compare two file
 				//if different then print file
