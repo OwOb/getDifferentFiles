@@ -6,7 +6,7 @@
 int getAllFiles(char *_path) {
 
 	//open path
-	struct DIR *_path_dp = opendir(_path);
+	DIR *_path_dp = opendir(_path);
 
 	//if path is not exist
 	if (_path_dp == NULL) {
@@ -64,18 +64,28 @@ int getAllFiles(char *_path) {
 int getDifferentFiles(char *_original_path, char *_change_path) {
 
 	//open path
-	struct DIR *_change_dp = opendir(_change_path);
+
+	//open change path
+	DIR *_change_dp = opendir(_change_path);
+
+	//if change path is not exist then return error
 	if (_change_dp == NULL) {
 		return -1;
 	}
-	struct DIR *_original_dp = opendir(_original_path);
+
+	//open original path
+	DIR *_original_dp = opendir(_original_path);
+
 	//change path is exist, but original path is not exist
 	//all files are different then get all files
 	if (_original_dp == NULL) {
+
 		closedir(_change_dp);
+
 		//recur all file
 		getAllFiles(_change_path);
-		return 0; //success
+
+		return 0;	//success
 	}
 
 
@@ -211,12 +221,12 @@ int getDifferentFiles(char *_original_path, char *_change_path) {
 	closedir(_original_dp);
 	closedir(_change_dp);
 
-	return 0; //success
+	return 0;	//success
 }
 
 int main() {
-	char original[] = "original_ect";
-	char change[] = "change_ect";
+	char original[] = "/etc";
+	char change[] = "/testetc";
 	getDifferentFiles(original, change);
 	return 0;
 }
