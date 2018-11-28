@@ -3,10 +3,10 @@
 #include <string.h>
 #include <stdio.h>
 
-int getAllFile(char *_path) {
+int getAllFiles(char *_path) {
 
 	//open path
-	DIR *_path_dp = opendir(_path);
+	struct DIR *_path_dp = opendir(_path);
 
 	//if path is not exist
 	if (_path_dp == NULL) {
@@ -14,7 +14,7 @@ int getAllFile(char *_path) {
 	}
 
 	int _path_length = strlen(_path);
-	dirent *_dirp;
+	struct dirent *_dirp;
 
 	//traverse change_path
 	while ((_dirp = readdir(_path_dp)) != NULL) {
@@ -41,7 +41,7 @@ int getAllFile(char *_path) {
 			sprintf(_subdirentory_path, "%s/%s", _path, _dirp->d_name);
 
 			//recur subdirentory
-			getAllFile(_subdirentory_path);
+			getAllFiles(_subdirentory_path);
 
 			//free memory
 			free(_subdirentory_path);
@@ -64,20 +64,24 @@ int getAllFile(char *_path) {
 int getDifferentFiles(char *_original_path, char *_change_path) {
 
 	//open path
-	DIR *_original_dp = opendir(_original_path);
-	if (_original_dp == NULL) {
+	struct DIR *_change_dp = opendir(_change_path);
+	if (_change_dp == NULL) {
 		return -1;
 	}
-	DIR *_change_dp = opendir(_change_path);
-	if (_change_dp == NULL) {
-		closedir(_original_dp);
-		return -1;
+	struct DIR *_original_dp = opendir(_original_path);
+	//change path is exist, but original path is not exist
+	//all files are different then get all files
+	if (_original_dp == NULL) {
+		closedir(_change_dp);
+		//recur all file
+		getAllFiles(_change_path);
+		return 0; //success
 	}
 
 
 	int _original_path_length = strlen(_original_path);
 	int _change_path_length = strlen(_change_path);
-	dirent *_dirp;
+	struct dirent *_dirp;
 
 	//traverse change_path
 	while ((_dirp = readdir(_change_dp)) != NULL) {
